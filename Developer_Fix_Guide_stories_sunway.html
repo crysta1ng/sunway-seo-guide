@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer Fix Guide — stories.sunway.com.my</title>
+<style>
+  :root{
+    --navy:#0B2545; --blue:#2E75B6; --red:#C0392B; --amber:#B9770E; --green:#1E7A3D;
+    --bg:#f6f8fa; --code:#0d1b2a; --border:#dfe4ea; --muted:#5b6570;
+  }
+  *{box-sizing:border-box;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:#1a1a1a; line-height:1.55; margin:0; background:#fff;}
+  .wrap{max-width:900px; margin:0 auto; padding:32px 24px 80px;}
+  header{border-bottom:3px solid var(--blue); padding-bottom:18px; margin-bottom:8px;}
+  h1{color:var(--navy); font-size:28px; margin:0 0 4px;}
+  .sub{color:var(--muted); font-size:15px;}
+  h2{color:var(--navy); font-size:22px; margin:38px 0 6px; padding-top:14px; border-top:1px solid var(--border);}
+  h3{color:var(--blue); font-size:17px; margin:22px 0 6px;}
+  p{margin:8px 0;}
+  code{background:#eef1f4; padding:1px 6px; border-radius:4px; font-family:"SF Mono",Menlo,Consolas,monospace; font-size:13.5px; color:#b5316b;}
+  pre{background:var(--code); color:#e6edf3; padding:16px 18px; border-radius:8px; overflow-x:auto;
+    font-family:"SF Mono",Menlo,Consolas,monospace; font-size:13px; line-height:1.5; margin:12px 0;}
+  pre code{background:none; color:inherit; padding:0; font-size:13px;}
+  .tag{display:inline-block; font-size:11px; font-weight:700; letter-spacing:.5px; padding:3px 9px;
+    border-radius:20px; color:#fff; vertical-align:middle; margin-left:8px;}
+  .crit{background:var(--red);} .high{background:#d35400;} .med{background:var(--amber);} .low{background:var(--green);}
+  .card{border:1px solid var(--border); border-radius:10px; padding:4px 22px 18px; margin:18px 0; background:#fff;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);}
+  .why{background:var(--bg); border-left:4px solid var(--blue); padding:10px 14px; margin:12px 0; font-size:14.5px; border-radius:0 6px 6px 0;}
+  .why b{color:var(--navy);}
+  .warn{background:#fdecea; border-left:4px solid var(--red); padding:10px 14px; margin:12px 0; font-size:14.5px; border-radius:0 6px 6px 0;}
+  .ok{background:#eafaf1; border-left:4px solid var(--green); padding:10px 14px; margin:12px 0; font-size:14.5px; border-radius:0 6px 6px 0;}
+  ol,ul{margin:8px 0 8px 4px; padding-left:22px;} li{margin:5px 0;}
+  .steps{counter-reset:s; list-style:none; padding-left:0;}
+  .steps>li{counter-increment:s; position:relative; padding-left:38px; margin:12px 0;}
+  .steps>li::before{content:counter(s); position:absolute; left:0; top:-2px; width:26px; height:26px;
+    background:var(--blue); color:#fff; border-radius:50%; text-align:center; line-height:26px; font-weight:700; font-size:14px;}
+  table{border-collapse:collapse; width:100%; margin:14px 0; font-size:14px;}
+  th{background:var(--navy); color:#fff; text-align:left; padding:9px 12px;}
+  td{border:1px solid var(--border); padding:8px 12px; vertical-align:top;}
+  tr:nth-child(even) td{background:#fafbfc;}
+  .chk{list-style:none; padding-left:0;}
+  .chk li{padding-left:30px; position:relative; margin:7px 0;}
+  .chk li::before{content:"\2610"; position:absolute; left:0; top:-2px; font-size:20px; color:var(--blue);}
+  .file{font-family:"SF Mono",Menlo,monospace; font-size:12.5px; color:var(--muted);}
+  .toc{background:var(--bg); border-radius:10px; padding:14px 20px; margin:20px 0;}
+  .toc a{color:var(--blue); text-decoration:none;} .toc a:hover{text-decoration:underline;}
+  .toc ol{margin:6px 0;}
+  .eff{font-size:12.5px; color:var(--muted); font-weight:600;}
+  footer{margin-top:50px; padding-top:16px; border-top:1px solid var(--border); font-size:13px; color:var(--muted);}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Developer Fix Guide</h1>
+  <div class="sub"><b>Site:</b> stories.sunway.com.my (WordPress) &nbsp;·&nbsp; <b>Audience:</b> Web developer / WordPress admin &nbsp;·&nbsp; <b>Prepared by:</b> OM Digital</div>
+</header>
+
+<div class="why">
+  This guide translates the SEO audit into concrete, copy-paste engineering tasks. Each fix has: <b>why it matters</b>, <b>exact steps</b>, and <b>ready-to-use code</b>. Work top to bottom — items are ordered by priority. No SEO background needed.
+</div>
+
+<div class="toc">
+  <b>Contents</b>
+  <ol>
+    <li><a href="#f1">Remove the toxic backlinks (disavow)</a> <span class="tag crit">CRITICAL</span></li>
+    <li><a href="#f2">Add structured data (JSON-LD schema)</a> <span class="tag med">MEDIUM</span></li>
+    <li><a href="#f3">Fix title tags &amp; duplicate meta</a> <span class="tag med">MEDIUM</span></li>
+    <li><a href="#f4">Strengthen internal linking</a> <span class="tag high">HIGH</span></li>
+    <li><a href="#f5">Optimise striking-distance pages</a> <span class="tag high">HIGH</span></li>
+    <li><a href="#f6">Verify sitemap, robots & indexing</a> <span class="tag low">LOW</span></li>
+    <li><a href="#f7">Fix the 26 broken external links</a> <span class="tag med">MEDIUM</span></li>
+    <li><a href="#f8">Stop fbclid tracking URLs being indexed</a> <span class="tag med">MEDIUM</span></li>
+    <li><a href="#f9">Address thin / low-value content</a> <span class="tag high">HIGH</span></li>
+    <li><a href="#f10">Technical quick wins (HTTPS, redirects, speed)</a> <span class="tag med">MEDIUM</span></li>
+  </ol>
+  <div class="eff" style="margin-top:8px">First: confirm which SEO plugin is active — <b>Yoast SEO</b> or <b>Rank Math</b>. The <code>max-image-preview:large</code> tag on the live site means one of them is installed. Steps below cover both.</div>
+  <div class="eff" style="margin-top:6px"><b>Data sources:</b> figures here come from the Semrush Site Audit (584 pages crawled; Site Health 80/100) and Google Search Console, current as of 6 July 2026.</div>
+  <div class="eff" style="margin-top:6px"><b>Companion file:</b> every affected URL is enumerated in <span class="file">Site_Audit_Affected_URLs_stories_sunway.xlsx</span> (supplied with this guide) — sheets for broken links, duplicate titles, long titles, thin pages, redirect loops, and slow pages. You do not need any tool access to work through this guide; everything is provided.</div>
+</div>
+
+<!-- FIX 1 -->
+<h2 id="f1">1. Remove the toxic backlinks <span class="tag crit">CRITICAL</span></h2>
+<div class="card">
+<div class="warn">
+  <b>The problem:</b> ~230 of the site's 336 backlinks come from a spam link farm using anchor text like <code>telegram @seo_linkk – mass backlinking</code> and <code>telegram @seo_anomaly - seo backlinks, black-links</code>. This is a negative-SEO attack and can drag down rankings. It is still adding links.
+</div>
+<div class="why"><b>Note:</b> This is <b>not a code change</b> — it's done in Google Search Console. You do <b>not</b> need to edit the website. But it is the single most important action, so it's first.</div>
+
+<div class="ok"><b>The file is ready — you don't build anything.</b> A complete, correctly-formatted disavow file is supplied with this guide: <span class="file">disavow_stories_sunway_com_my.txt</span> (175 spam domains — the full "seo-anomaly" PBN network plus the compromised referring domains). Just upload it.</div>
+<h3>Steps</h3>
+<ol class="steps">
+  <li>Go to the <b>Google Disavow Tool</b>: <code>https://search.google.com/search-console/disavow-links</code></li>
+  <li>Select the property <code>stories.sunway.com.my</code> (or the <code>sunway.com.my</code> domain property — see note below).</li>
+  <li>Upload <span class="file">disavow_stories_sunway_com_my.txt</span> and confirm. Google reprocesses these links over the following weeks.</li>
+</ol>
+<div class="why"><b>Property note:</b> Disavow applies at the property level. If Search Console is set up as a <b>domain property</b> for <code>sunway.com.my</code>, the disavow covers all subdomains — in that case merge these 175 lines into any existing disavow file for that property rather than replacing it. If <code>stories.sunway.com.my</code> is its own URL-prefix property, upload the file as-is there.</div>
+<div class="ok"><b>Done when:</b> the disavow file is uploaded in GSC and a copy is saved in your records.</div>
+</div>
+
+<!-- FIX 2 -->
+<h2 id="f2">2. Add structured data (JSON-LD schema) <span class="tag med">MEDIUM</span></h2>
+<div class="card">
+<div class="warn"><b>Confirmed missing.</b> The Semrush Site Audit crawl found schema.org / JSON-LD markup on <b>0 of 563 pages</b> (Open Graph and Twitter cards <em>are</em> present on 542 — those are separate). So the site has no <code>Article</code> or <code>Organization</code> structured data and this needs to be added. If an SEO plugin (Yoast / Rank Math) is installed, its schema output is likely switched off — enabling it is the fastest fix.</div>
+<div class="why"><b>Why it matters:</b> structured data helps Google show rich results and makes articles easier for AI/answer engines to cite. <b>Effort: low.</b> After implementing, validate with Google's Rich Results Test (<code>https://search.google.com/test/rich-results</code>).</div>
+
+<h3>Option A — via SEO plugin (recommended, no code)</h3>
+<ul>
+  <li><b>Yoast SEO:</b> schema is output automatically. Ensure <em>Settings → Site basics → Site representation</em> is set to <b>Organization</b> = "Sunway Stories" with a logo. Per post, set the <em>Schema</em> tab (in the Yoast metabox) → <b>Page type: Article</b>.</li>
+  <li><b>Rank Math:</b> <em>Rank Math → Titles &amp; Meta → Posts</em> → set <b>Schema Type = Article</b> as the default. Set the org under <em>Rank Math → General Settings → Knowledge Graph</em> = Company.</li>
+</ul>
+
+<h3>Option B — manual (if no plugin handles it)</h3>
+<p>Add this to the article template (<span class="file">single.php</span>) inside <code>&lt;head&gt;</code>, or via a hook in <span class="file">functions.php</span>. Populate the fields dynamically from the post:</p>
+<pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "&lt;?php echo esc_js(get_the_title()); ?&gt;",
+  "image": "&lt;?php echo esc_url(get_the_post_thumbnail_url(null,'full')); ?&gt;",
+  "datePublished": "&lt;?php echo get_the_date('c'); ?&gt;",
+  "dateModified": "&lt;?php echo get_the_modified_date('c'); ?&gt;",
+  "author": { "@type": "Organization", "name": "Sunway Stories" },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Sunway Stories",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://stories.sunway.com.my/path/to/logo.png"
+    }
+  },
+  "mainEntityOfPage": "&lt;?php echo esc_url(get_permalink()); ?&gt;"
+}
+&lt;/script&gt;</code></pre>
+<p>Site-wide <code>Organization</code> schema (add once, e.g. on the homepage template):</p>
+<pre><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Sunway Stories",
+  "url": "https://stories.sunway.com.my/",
+  "logo": "https://stories.sunway.com.my/path/to/logo.png",
+  "parentOrganization": { "@type": "Organization", "name": "Sunway Group" }
+}
+&lt;/script&gt;</code></pre>
+<div class="ok"><b>Validate:</b> paste a live article URL into <code>https://validator.schema.org</code> and Google's Rich Results Test (<code>https://search.google.com/test/rich-results</code>). Both should report a valid <code>Article</code> with no errors. <b>Do not run Option A and B together</b> — that creates duplicate schema.</div>
+</div>
+
+<!-- FIX 3 -->
+<h2 id="f3">3. Fix title tags &amp; duplicate meta <span class="tag med">MEDIUM</span></h2>
+<div class="card">
+<div class="why"><b>Why:</b> Key pages use brand-only titles that don't lead with the term people search. Example: the Pinnacle page (the site's biggest traffic driver) ranks position 6 for <code>sunway pinnacle</code> (18,100 searches/mo) but the title doesn't front-load it.</div>
+<div class="why"><b>Site Audit also flags:</b> <b>10 duplicate title tags</b>, <b>2 duplicate meta descriptions</b>, <b>99 titles that are too long</b> (&gt;60 chars, get truncated), and 1 page where the H1 duplicates the title. Handle these in the same pass as the rewrites below.</div>
+<table>
+  <tr><th>Page</th><th>Target keyword</th><th>Suggested title tag</th></tr>
+  <tr><td>/pinnacle-of-excellence/</td><td>sunway pinnacle</td><td>Sunway Pinnacle: Inside Sunway's Award-Winning Landmark | Sunway Stories</td></tr>
+  <tr><td>/cashless-and-ticketless-parking…/</td><td>sunway smart parking</td><td>Sunway Smart Parking: Cashless &amp; Ticketless Guide | Sunway Stories</td></tr>
+  <tr><td>/a-scary-business-nights-of-fright-8/</td><td>night of fright 8</td><td>Nights of Fright 8 at Sunway Lagoon: What to Expect | Sunway Stories</td></tr>
+</table>
+<p><b>How (no code):</b> edit each post → open the Yoast or Rank Math box below the editor → set the <b>SEO title</b> field. Keep under ~60 characters so it isn't truncated in search results. Leave the <code>H1</code> heading natural for readers; only the <em>title tag</em> needs the keyword up front.</p>
+<h3>The 10 duplicate titles (4 groups)</h3>
+<table>
+  <tr><th style="width:34%">Title</th><th style="width:40%">Affected URLs</th><th style="width:26%">Action</th></tr>
+  <tr><td>Scholars Today, Nation Builders Tomorrow</td><td>/scholars-today-nation-builders-tomorrow-2/ , -2-2/ , -3/ , -4/</td><td>4 identical copies — keep one, 301 the other three to it</td></tr>
+  <tr><td>We Are All in This Together</td><td>/we-are-all-in-this-together/ , -2/</td><td>2 identical copies — keep one, 301 the other</td></tr>
+  <tr><td>Achievement Unlocked</td><td>/achievement-unlocked-recognitions-in-q1-2018/ , /achievement-unlocked-sunways-recognitions-in-q4-2017/</td><td>Different content — give each a unique title (Q1 2018 vs Q4 2017)</td></tr>
+  <tr><td>COVID-19 Memes that will Bring a Smile…</td><td>clean URL , ?fbclid=… variant</td><td>Resolved automatically by the fbclid canonical fix (#8)</td></tr>
+</table>
+<p>The <b>2 duplicate meta descriptions</b> are the same COVID-19 Memes fbclid pair — also handled by #8.</p>
+<h3>The 99 over-long titles</h3>
+<p>Every affected article (with its path) is listed in the companion workbook, sheet <span class="file">"Long titles (99)"</span>. For each, shorten the <b>SEO title</b> field to ≤60 characters with the keyword first (the on-page H1 can stay descriptive). Setting a Yoast/Rank Math title template (e.g. <code>%%title%% | Sunway Stories</code> trimmed) prevents recurrence.</p>
+<div class="ok"><b>Done when:</b> the target keyword leads the title on priority pages, the four duplicate groups are consolidated, and each of the 99 titles is ≤60 characters.</div>
+</div>
+
+<!-- FIX 5 -->
+<h2 id="f4">4. Strengthen internal linking <span class="tag high">HIGH</span></h2>
+<div class="card">
+<div class="warn"><b>The problem:</b> one article ("Pinnacle of Excellence") drives ~55% of all organic traffic and the top 3 pages ~80%. That page holds most of the site's ranking power but barely passes it to other articles. If it ever drops, traffic collapses.</div>
+<div class="why"><b>Fix:</b> add contextual internal links <em>from</em> the high-traffic pages <em>to</em> related lower-traffic articles, using descriptive anchor text. This spreads authority and lifts the weaker pages.</div>
+<ol>
+  <li>In the Pinnacle and Brand-Evolution articles, add 3–5 in-body links to related stories (property, sustainability, township pieces) with keyword-rich anchors — e.g. <code>Sunway City Iskandar Puteri</code>, not "click here".</li>
+  <li>Add a "Related Stories" block to the article template that surfaces same-category posts (most WordPress themes/plugins support this; verify it renders real <code>&lt;a href&gt;</code> links in the HTML, not JavaScript-only).</li>
+  <li>Ensure category hubs (<span class="file">/sustainability</span>, <span class="file">/innovation</span>, <span class="file">/business</span>, <span class="file">/society</span>, <span class="file">/healthcare</span>) link down to their best articles and each article links back up to its category.</li>
+</ol>
+<h3>Structural issues from the Site Audit to fix alongside</h3>
+<ul class="chk">
+  <li><b>Fix the redirect loop first — it cascades.</b> The page <code>/the-joys-of-eating-at-the-banjaran/</code> is stuck in a 302 loop (it redirects to itself). That single broken page is the target of all <b>6 redirect chains</b> and is the "incorrect page" flagged in the sitemap (#6). Give it a correct 200 response or a single clean 301 to the right destination, then the 6 linking articles resolve. The 6 source pages are listed in the workbook sheet <span class="file">"Redirect loops (6)"</span>.</li>
+  <li><b>~3,968 internal links point to redirected URLs.</b> Most trace to a handful of repeatedly-linked targets (like the loop above and old slugs). After fixing the loop, do a database search-replace of the old URLs to their final destinations across posts to clear the bulk.</li>
+  <li><b>28 orphaned pages</b> in the sitemap have no internal links pointing to them, and <b>30 pages have only one internal link.</b> Add contextual links so every page you want indexed is reachable.</li>
+  <li><b>254 pages sit more than 3 clicks deep.</b> Surface important buried articles via category hubs, related-post blocks, or a "popular stories" module to shorten click depth.</li>
+</ul>
+<div class="ok"><b>Done when:</b> the Banjaran page returns 200, every priority article has ≥3 inbound internal links, and top pages link out to ≥5 related articles.</div>
+</div>
+
+<!-- FIX 6 -->
+<h2 id="f5">5. Optimise striking-distance pages <span class="tag high">HIGH</span></h2>
+<div class="card">
+<div class="why"><b>Why:</b> these keywords already rank in striking distance (positions ~7–25). Small on-page improvements can move them into the top few results, where they actually get clicks. High return for low effort.</div>
+<table>
+  <tr><th>Page</th><th>Keyword (volume, current pos)</th><th>Action</th></tr>
+  <tr><td>/a-scary-business-nights-of-fright-8/</td><td>night of fright 8 (2,900, #11)</td><td>Closest win. Refresh dates/details, add FAQ, front-load keyword in title &amp; H1.</td></tr>
+  <tr><td>/a-sanctuary-for-the-golden-years/</td><td>sunway sanctuary (6,600, #7)</td><td>Expand content depth; add internal links; target the exact term in H2s.</td></tr>
+  <tr><td>/what-does-malaysias-next-smart…/</td><td>sunway citrine hub (6,600, #25)</td><td>Add a dedicated section explaining Citrine Hub; add images with alt text.</td></tr>
+  <tr><td>/the-deadly-tides…flood-phenomenon…/</td><td>flood in malaysia (4,400, #22)</td><td>Consolidate the flood articles into one authoritative guide; add data + FAQ.</td></tr>
+  <tr><td>/cashless-and-ticketless-parking…/</td><td>sunway pyramid parking rate (1,900, #24)</td><td>Add an explicit parking-rate table — matches the searcher's intent directly.</td></tr>
+</table>
+<p>General on-page checklist for each: keyword in title tag + H1 + first paragraph + one H2, at least one image with descriptive <code>alt</code>, an internal link in and out, and an updated <code>dateModified</code>.</p>
+</div>
+
+<!-- FIX 7 -->
+<h2 id="f6">6. Verify sitemap, robots &amp; indexing <span class="tag low">LOW</span></h2>
+<div class="card">
+<div class="ok"><b>Current state (from GSC Page Indexing, to 30 Jun 2026):</b> <b>663 pages indexed</b>, 205 not indexed (~76% of 868 known pages). No 404s, no accidental <code>noindex</code>, no redirect or non-critical issues — technically clean. Not-indexed has been falling (427 → 205 since April), so the trend is healthy. The sitemap <code>/sitemap.xml</code> is submitted and processing successfully.</div>
+
+<h3>Priority: the 191 "Crawled – currently not indexed" pages</h3>
+<div class="why"><b>What it means:</b> Google crawled these pages but decided they weren't worth indexing — almost always a <b>thin / low-value content</b> signal. At 191 pages (~22% of the site) this is the main indexing issue, and it is the <em>same problem</em> as the thin-content pages catalogued in Fix #9 — work those groups (Berita Sunway, SDG, press clippings) and this number falls with them. No separate list to chase: fixing #9 fixes this.</div>
+
+<h3>Other checks</h3>
+<ul class="chk">
+  <li><b>Add canonical tags to the 42 pages that are missing one.</b> The Site Audit found 542 pages self-canonical but 42 with no canonical link — add a self-referencing canonical to those (Yoast/Rank Math do this automatically, so check why those 42 are excluded).</li>
+  <li>Review the <b>8 "Duplicate, Google chose different canonical"</b> pages — confirm the canonical you set matches the version you want indexed; fix any mismatches.</li>
+  <li><b>Consolidate to one sitemap.</b> Two exist: Google Search Console has <code>/sitemap.xml</code> submitted, while Semrush sees a healthy <code>/sitemap_index.xml</code> (7 sub-sitemaps, 568 URLs). Pick the plugin-generated <code>/sitemap_index.xml</code>, submit it in GSC, and make sure <code>robots.txt</code> references the same one.</li>
+  <li><b>The 1 "incorrect page" in the sitemap is <code>/the-joys-of-eating-at-the-banjaran/</code></b> (in <code>/post-sitemap.xml</code>) — the same looping page from #4. It drops out of the flag automatically once that page returns 200 or a clean 301.</li>
+  <li>Confirm the sitemap lists current articles only — no spam, attachment, or stale URLs.</li>
+  <li><b>Optional (cosmetic):</b> the submitted sitemap's "Last read" is stale (3 May 2025), but the site is clearly being crawled and indexed actively — so this isn't blocking anything. Making the sitemap dynamic with accurate <code>&lt;lastmod&gt;</code> dates and resubmitting will refresh it.</li>
+</ul>
+</div>
+
+<!-- FIX 8 -->
+<h2 id="f7">7. Fix the 26 broken external links <span class="tag med">MEDIUM</span></h2>
+<div class="card">
+<div class="why"><b>Why:</b> these outbound links point to dead pages (404/DNS/401), which create a poor reader experience and signal an unmaintained site. The full list of all 26 is below — edit each article in WordPress and update, replace, or remove the link as noted. No template changes needed; use the block editor's link tool.</div>
+<div class="ok"><b>Two shortcuts that clear 15 of the 26 fast:</b> (1) six links just use the dead <code>university.sunway.edu.my</code> subdomain — a single find-and-replace to <code>sunwayuniversity.edu.my</code> fixes all six; (2) five links are the decommissioned WSJ/Deloitte "CIO Journal", all on the one Sunway City KL article — handle them together. The four marked <b>Verify</b> return 5xx and are usually Malaysian government sites blocking crawlers — open each in a browser; if it loads, leave it.</div>
+<table>
+  <tr><th style="width:8%">Priority</th><th style="width:34%">Article to edit</th><th style="width:34%">Broken link</th><th style="width:6%">Code</th><th style="width:18%">Action</th></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/cities-of-dreams-what-are-our-challenges-and-our-opportunities/</td><td>https://university.sunway.edu.my/</td><td>DNS</td><td>→ https://sunwayuniversity.edu.my/</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/innovative-energy-solutions-trump-at-sunways-make-it-challenge-hackathon/</td><td>https://university.sunway.edu.my/</td><td>DNS</td><td>→ https://sunwayuniversity.edu.my/</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/jeffrey-cheah-biomedical-centre-established-in-cambridge-uk/</td><td>https://university.sunway.edu.my/</td><td>DNS</td><td>→ https://sunwayuniversity.edu.my/</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/sunway-university-now-ranks-among-worlds-best/</td><td>https://university.sunway.edu.my/</td><td>DNS</td><td>→ https://sunwayuniversity.edu.my/</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/the-recipe-of-success/</td><td>https://university.sunway.edu.my/Chef-Patrick-Siau…Coach</td><td>DNS</td><td>Link to sunwayuniversity.edu.my (find article on new site or link homepage)</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/the-world-is-our-play-lab/</td><td>https://university.sunway.edu.my/GET</td><td>DNS</td><td>Link to the relevant programme page on sunwayuniversity.edu.my</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/democratising-access-to-knowledge/</td><td>https://press.sunway.edu.my/</td><td>DNS</td><td>→ https://sunwayuniversity.edu.my/press</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/sunway-recognised-for-advancing-uk-malaysia-bilateral-ties/</td><td>https://college.sunway.edu.my/programmes/tes/study</td><td>404</td><td>→ https://www.sunwaycollege.edu.my/sunway-tes</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/rent-to-buy-co-living-sunway-house-waterfront-residence-offers-the-best-of-both-worlds/</td><td>https://sunwayhouse.com.my/homepage/</td><td>404</td><td>→ https://sunwayhouse.com.my/waterfront-residence/</td></tr>
+  <tr><td><b style="color:#C0392B">High</b></td><td>/a-rising-trend-in-domestic-tourism/</td><td>https://sunwaylostworldoftambun.com/staycation/</td><td>404</td><td>Link to sunwaylostworldoftambun.com root / current promo</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/sunway-city-kuala-lumpur-sustainable-and-smart-through-technology/</td><td>https://deloitte.wsj.com/cio/2020/09/29/sunway-city-kuala-lumpur…</td><td>401</td><td>WSJ/Deloitte CIO Journal gone — archived copy or remove</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/sunway-city-kuala-lumpur-sustainable-and-smart-through-technology/</td><td>https://deloitte.wsj.com/cio/about-deloitte-insights/</td><td>401</td><td>Remove or point to deloitte.com/insights</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/sunway-city-kuala-lumpur-sustainable-and-smart-through-technology/</td><td>https://deloitte.wsj.com/cio/2018/07/26/5-tech-advances-propel-iot/</td><td>401</td><td>Archived copy or remove</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/sunway-city-kuala-lumpur-sustainable-and-smart-through-technology/</td><td>https://deloitte.wsj.com/cio/2020/01/24/5g-build-it-and-they-will-come/</td><td>401</td><td>Archived copy or remove</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/sunway-city-kuala-lumpur-sustainable-and-smart-through-technology/</td><td>https://deloitte.wsj.com/cio/2020/07/21/thriving-in-the-era-of-pervasive-ai/</td><td>401</td><td>Archived copy or remove</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/5-mental-health-myths-you-need-to-stop-believing/</td><td>http://iku.moh.gov.my/…/NHMS2017Infographic.pdf</td><td>DNS</td><td>Current NHMS 2017 URL on moh.gov.my; else cite in text</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/breaking-the-stigma-on-mental-health/</td><td>https://hemophilianewstoday.com/2019/01/09/hope-worst-challenges/</td><td>404</td><td>Equivalent source or unlink</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/how-covid-19-can-accelerate-malaysias-circular-economy/</td><td>https://youmatter.world/…/circular-economy…/</td><td>404</td><td>Replace (e.g. Ellen MacArthur Foundation) or unlink</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/new-research-institute-…-fighting-covid-19/</td><td>https://www.em.admin.cam.ac.uk/…/jeffrey-cheah-biomedical-centre-project-capella</td><td>404</td><td>Current Cambridge JCBC page or unlink</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/sunway-group-gobi-partners-mavcap-launch-us10-million-fund/</td><td>https://unctad.org/en/Pages/Home.aspx</td><td>404</td><td>→ https://unctad.org/</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/the-banjarans-jeffs-cellar-ranked-among-nations-best/</td><td>https://www.cnn.gr/taksidi/…/137443/…</td><td>404</td><td>English-language source or unlink</td></tr>
+  <tr><td><b style="color:#B9770E">Med</b></td><td>/what-does-malaysias-model-smart-sustainable-city-look-like/</td><td>https://www.malaysiainternet.my/2019/04/digi-5g-faq-factsheet/</td><td>DNS</td><td>Current Digi/5G source or unlink</td></tr>
+  <tr><td><b style="color:#2E75B6">Verify</b></td><td>/just-stay-at-home-with-these-activities/</td><td>https://ez.hasil.gov.my/CI/</td><td>500</td><td>Open in browser; if it loads, no change (bot-block)</td></tr>
+  <tr><td><b style="color:#2E75B6">Verify</b></td><td>/reflecting-on-eid-a-season-of-gratitude-and-giving/</td><td>https://www.moe.gov.my/index.php/en/</td><td>500</td><td>Open in browser; if it loads, no change (bot-block)</td></tr>
+  <tr><td><b style="color:#2E75B6">Verify</b></td><td>/vision-on-education-transformation/</td><td>https://www.pmo.gov.my/…/Malaysia-Education-Blueprint-2013-2025.pdf</td><td>500</td><td>If still 500, replace with a mirror of the PDF</td></tr>
+  <tr><td><b style="color:#2E75B6">Verify</b></td><td>/what-does-malaysias-model-smart-sustainable-city-look-like/</td><td>https://liveatpc.com/dr-m-witnesses-real-time-medical-data…5g…/</td><td>503</td><td>If persistent, replace or unlink</td></tr>
+</table>
+<div class="eff">All 26 rows with full URLs are also in the companion workbook (<span class="file">Site_Audit_Affected_URLs — sheet "Broken links (26)"</span>) for ticking off.</div>
+</div>
+
+<!-- FIX 9 -->
+<h2 id="f8">8. Stop fbclid tracking URLs being indexed <span class="tag med">MEDIUM</span></h2>
+<div class="card">
+<div class="why"><b>Why:</b> when links are shared on Facebook, a <code>?fbclid=…</code> parameter is appended (e.g. <code>/article/?fbclid=AbC123</code>). Google can crawl these as separate URLs, creating duplicate versions of every page. This very likely feeds the <b>8 "Duplicate, Google chose different canonical"</b> pages and some of the <b>191 "Crawled – not indexed"</b> pages seen in GSC.</div>
+
+<h3>Primary fix — canonical tag (do this first)</h3>
+<p>Ensure every page outputs a <b>self-referencing canonical to the clean URL without query parameters</b>. The homepage already does this correctly (<code>&lt;link rel="canonical" href="https://stories.sunway.com.my/"&gt;</code>). Confirm article templates do the same — Yoast and Rank Math handle this automatically, so verify rather than rebuild. With a correct canonical, Google consolidates the <code>fbclid</code> versions into the clean URL on its own.</p>
+
+<div class="warn"><b>Use robots.txt with caution.</b> Blocking <code>fbclid</code> in robots.txt stops crawling but <em>not</em> indexing — and worse, if a tracking URL is already indexed, blocking it prevents Google from seeing the canonical, so it can get stranded in the index. Prefer the canonical fix above. Only add a robots.txt rule if the parameter URLs are <em>not yet indexed</em> and you want to save crawl budget:</p></div>
+<pre><code># robots.txt — optional, only if these URLs are not already indexed
+User-agent: *
+Disallow: /*?fbclid=
+Disallow: /*&fbclid=</code></pre>
+
+<h3>Verify</h3>
+<ul class="chk">
+  <li>In GSC, use <b>URL Inspection</b> on a <code>?fbclid=</code> URL — it should report the clean URL as the "Google-selected canonical".</li>
+  <li>Re-check the "Duplicate, Google chose different canonical" bucket over the following weeks; it should shrink.</li>
+</ul>
+</div>
+
+<!-- FIX 10 -->
+<h2 id="f9">9. Address thin / low-value content <span class="tag high">HIGH</span></h2>
+<div class="card">
+<div class="warn"><b>Two data sources point to the same problem.</b> The Semrush Site Audit flags <b>481 pages with a low text-to-HTML ratio</b>, <b>51 pages with low word count</b>, and <b>94 pages needing content optimisation</b>. Independently, Google Search Console shows <b>191 pages "Crawled – currently not indexed"</b> — Google's way of saying they aren't worth indexing. These are the same underlying issue: too many thin pages.</div>
+<div class="why"><b>This is mostly editorial, but the developer's role is the plumbing.</b> The 51 lowest-word-count pages fall into clear groups (full list in the companion workbook, sheet <span class="file">"Low word count (51)"</span>) — most can be handled as batches, not one at a time:</div>
+<table>
+  <tr><th style="width:30%">Group</th><th style="width:12%">Count</th><th style="width:58%">Recommended handling</th></tr>
+  <tr><td><b>Berita Sunway</b> newsletter pages (<code>/berita-sunway/berita-sunway-issue-58…81/</code>)</td><td>24</td><td>These are PDF-holder pages with almost no text. Either add a short text summary above each embed, or <code>noindex</code> the whole newsletter archive so it stops diluting quality signals.</td></tr>
+  <tr><td><b>SDG hub pages</b> (<code>/sdg-1…17-…/</code>)</td><td>17</td><td>Expand each with real content, or consolidate the 17 into one strong "Sunway & the UN SDGs" hub and 301 the rest.</td></tr>
+  <tr><td><b>Category / archive pages</b> (Sustainability, Society, Innovation, Healthcare, Education, Business, Berita)</td><td>7</td><td>Low text is normal for archive pages — low priority. Optionally add a 1–2 sentence intro to each.</td></tr>
+  <tr><td><b>Chinese news clippings + Lakeside Luxury</b></td><td>3</td><td>Add intro text, or <code>noindex</code> the press-clipping pages.</td></tr>
+</table>
+<p><b>Developer actions:</b> apply <code>noindex</code> where the group decision is "de-index"; set up 301 redirects and canonicals for any consolidation; keep a simple mapping list of old → new URLs. Content expansion itself is editorial.</p>
+<div class="ok"><b>Target:</b> lift the indexed share above 85% and reduce "Crawled – not indexed" well below the current 191. This also directly eases the traffic-concentration risk from Fix #4.</div>
+<p style="font-size:13px;color:#666"><b>Note on the 481 "low text-to-HTML ratio" pages:</b> that count is largely a symptom of the theme shipping heavy HTML/JS around modest article text — it's addressed by the caching/asset work in #10 and by the thin-content cleanup above, not by editing 481 pages individually.</p>
+</div>
+
+<!-- FIX 11 -->
+<h2 id="f10">10. Technical quick wins (HTTPS, redirects, speed) <span class="tag med">MEDIUM</span></h2>
+<div class="card">
+<div class="why">Small, mostly one-off technical items from the Site Audit. None are individually large, but together they lift Site Health (currently 80/100).</div>
+<table>
+  <tr><th>Issue (Site Audit)</th><th>Count</th><th>Fix</th></tr>
+  <tr><td>HTTP homepage has no 301/canonical to HTTPS</td><td>1</td><td>Add a server-level 301 redirect from <code>http://</code> to <code>https://</code> for the homepage (and site-wide). Highest-priority of this group.</td></tr>
+  <tr><td>Redirect chains &amp; loops</td><td>6</td><td>Handled by the Banjaran redirect-loop fix in #4 — no separate work.</td></tr>
+  <tr><td>Duplicate content pages</td><td>2</td><td>The COVID-19 Memes clean vs <code>?fbclid=</code> pair — resolved by the canonical fix in #8.</td></tr>
+  <tr><td>Slow page load speed</td><td>3</td><td>Homepage <code>/</code> (3.5s), <code>/hello-bella/</code> (3.2s), <code>/doing-our-part-for-the-planet-people-and-greater-good/</code> (4.1s) — compress images, lazy-load, check caching.</td></tr>
+  <tr><td>Uncached JavaScript &amp; CSS</td><td>281</td><td>Add browser-cache headers (<code>Cache-Control</code>) for static assets — usually one server/CDN config or a caching plugin. Also helps the 481 "low text-to-HTML" pages in #9.</td></tr>
+</table>
+<div class="ok"><b>Note:</b> the caching and HTTPS-redirect items are server/hosting-level, so they may need whoever manages the host (Forefront International) rather than a WordPress-only change.</div>
+</div>
+
+<h2>Suggested order of work</h2>
+<div class="card">
+<table>
+  <tr><th>Sprint</th><th>Tasks</th></tr>
+  <tr><td><b>Week 1</b></td><td>#1 Disavow (upload supplied file; requires GSC access) · #10 HTTP→HTTPS redirect · #6 Sitemap/canonical/indexing checks · #8 fbclid canonical fix</td></tr>
+  <tr><td><b>Week 2</b></td><td>#2 Structured data · #3 Titles &amp; duplicate meta · #7 Broken external links · rest of #10 (redirect chains, caching, speed)</td></tr>
+  <tr><td><b>Weeks 3–4</b></td><td>#4 Internal linking (incl. redirect-links &amp; orphaned pages) · #5 Striking-distance content · #9 Thin-content triage (with editorial)</td></tr>
+</table>
+<div class="eff" style="margin-top:10px">Quickest technical wins for Site Health: #10 (HTTP→HTTPS, redirect chains), the 42 missing canonicals (#6), and duplicate/too-long titles (#3). Biggest strategic lift: #9 thin content + #4 internal linking.</div>
+</div>
+
+<footer>
+  Developer Fix Guide for stories.sunway.com.my · Based on Semrush organic data (Malaysia), the Semrush Site Audit (584 pages, Site Health 80/100), and Google Search Console · Updated 6 July 2026 · Prepared by OM Digital.<br>
+  Validate all schema and template changes on a staging copy before pushing to production. Code samples are WordPress/PHP and assume the current theme structure — adapt hook names to your build.
+</footer>
+</div>
+</body>
+</html>
